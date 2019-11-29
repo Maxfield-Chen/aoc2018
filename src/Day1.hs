@@ -21,7 +21,7 @@ pdrift = do
 parseDrifts :: String -> Either ParseError [Drift]
 parseDrifts = parse pdrifts "(unknown)"
 
-calcDrift ::[Drift] -> Freq
+calcDrift :: [Drift] -> Freq
 calcDrift = last . freqs
 
 freqs :: [Drift] -> [Freq]
