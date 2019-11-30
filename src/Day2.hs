@@ -1,7 +1,7 @@
 module Day2 where
 
 import           Text.ParserCombinators.Parsec
-import Data.Maybe as Maybe
+import           Data.Maybe                    as Maybe
 import qualified Data.Map                      as M
 
 pIds :: Parser [String]
@@ -31,17 +31,6 @@ genChecksum = foldl
   )
   (0, 0)
 
-lettersDiffering :: String -> String -> Int
-lettersDiffering = countDiff 0
- where
-  countDiff n a b | null a || null b = n
-                  | x == x'          = countDiff n xs xs'
-                  | x /= x'          = countDiff (n + 1) xs xs'
-                  | otherwise        = -1
-   where
-    (x , xs ) = (head a, tail a)
-    (x', xs') = (head b, tail b)
-
 intersection :: String -> String -> String
 intersection = doIntersection ""
  where
@@ -53,22 +42,23 @@ intersection = doIntersection ""
     (x', xs') = (head b, tail b)
 
 takeFirst :: (a -> Bool) -> [a] -> Maybe a
-takeFirst f a  = case filter f a of 
-                   (x:_) -> Just (head (filter f a))
-                   [] -> Nothing
+takeFirst f a = case filter f a of
+  (x : _) -> Just (head (filter f a))
+  []      -> Nothing
 
 firstIntersectionN :: Int -> [String] -> String -> Maybe String
 firstIntersectionN n pool candidate = takeFirst (not . null) intersections
  where
   intersections = map (differsByN n candidate) pool
-  differsByN n a b
-    | lettersDiffering a b == n = intersection a b
-    | otherwise = ""
+  differsByN n a b | length intersectionAB == length a - n = intersectionAB
+                   | otherwise                             = ""
+    where intersectionAB = intersection a b
 
 findOffByN :: Int -> [String] -> [String] -> Maybe String
 findOffByN n a a' = Maybe.fromMaybe Nothing ret
-  where validIntersections = map (firstIntersectionN n a') a
-        ret = takeFirst (not . null) validIntersections
+ where
+  ret                = takeFirst (not . null) validIntersections
+  validIntersections = map (firstIntersectionN n a') a
 
 printFirstOffsetId :: IO ()
 printFirstOffsetId = do
